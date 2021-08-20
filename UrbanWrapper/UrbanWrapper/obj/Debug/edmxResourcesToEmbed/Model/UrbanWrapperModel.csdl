@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="UrbanWrapperModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="UrbanWrapperEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Customers" EntityType="UrbanWrapperModel.Customer" />
+    <EntitySet Name="CustomerFeedbacks" EntityType="UrbanWrapperModel.CustomerFeedback" />
+    <EntitySet Name="CustomerOrders" EntityType="UrbanWrapperModel.CustomerOrder" />
+    <EntitySet Name="Invoices" EntityType="UrbanWrapperModel.Invoice" />
+    <EntitySet Name="Products" EntityType="UrbanWrapperModel.Product" />
+    <AssociationSet Name="FK_CustomerFeedback_Customer" Association="UrbanWrapperModel.FK_CustomerFeedback_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="CustomerFeedback" EntitySet="CustomerFeedbacks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerOrder_Customer" Association="UrbanWrapperModel.FK_CustomerOrder_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="CustomerOrder" EntitySet="CustomerOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Invoice_CustomerOrder" Association="UrbanWrapperModel.FK_Invoice_CustomerOrder">
+      <End Role="CustomerOrder" EntitySet="CustomerOrders" />
+      <End Role="Invoice" EntitySet="Invoices" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Customer">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="CustomerFeedbacks" Relationship="UrbanWrapperModel.FK_CustomerFeedback_Customer" FromRole="Customer" ToRole="CustomerFeedback" />
+    <NavigationProperty Name="CustomerOrders" Relationship="UrbanWrapperModel.FK_CustomerOrder_Customer" FromRole="Customer" ToRole="CustomerOrder" />
+  </EntityType>
+  <EntityType Name="CustomerFeedback">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerId" Type="Int32" />
+    <Property Name="Feedback" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="FDate" Type="DateTime" Precision="0" />
+    <Property Name="CustomerName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="InvoiceId" Type="Int32" />
+    <Property Name="Rating" Type="Int32" />
+    <NavigationProperty Name="Customer" Relationship="UrbanWrapperModel.FK_CustomerFeedback_Customer" FromRole="CustomerFeedback" ToRole="Customer" />
+  </EntityType>
+  <EntityType Name="CustomerOrder">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerId" Type="Int32" />
+    <Property Name="OrderTotal" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="NumberOfProducts" Type="Int32" />
+    <Property Name="OrderDate" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="Customer" Relationship="UrbanWrapperModel.FK_CustomerOrder_Customer" FromRole="CustomerOrder" ToRole="Customer" />
+    <NavigationProperty Name="Invoices" Relationship="UrbanWrapperModel.FK_Invoice_CustomerOrder" FromRole="CustomerOrder" ToRole="Invoice" />
+  </EntityType>
+  <EntityType Name="Invoice">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OrderId" Type="Int32" />
+    <Property Name="InvoiceAmount" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="InvoiceDate" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="CustomerOrder" Relationship="UrbanWrapperModel.FK_Invoice_CustomerOrder" FromRole="Invoice" ToRole="CustomerOrder" />
+  </EntityType>
+  <EntityType Name="Product">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ProductName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Price" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="StockQuantity" Type="Int32" />
+    <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <Association Name="FK_CustomerFeedback_Customer">
+    <End Type="UrbanWrapperModel.Customer" Role="Customer" Multiplicity="0..1" />
+    <End Type="UrbanWrapperModel.CustomerFeedback" Role="CustomerFeedback" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerFeedback">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerOrder_Customer">
+    <End Type="UrbanWrapperModel.Customer" Role="Customer" Multiplicity="0..1" />
+    <End Type="UrbanWrapperModel.CustomerOrder" Role="CustomerOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerOrder">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Invoice_CustomerOrder">
+    <End Type="UrbanWrapperModel.CustomerOrder" Role="CustomerOrder" Multiplicity="0..1" />
+    <End Type="UrbanWrapperModel.Invoice" Role="Invoice" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CustomerOrder">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Invoice">
+        <PropertyRef Name="OrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
